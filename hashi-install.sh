@@ -62,6 +62,5 @@ if [[ "${PRODUCT}" = "vault" && "${BACKEND_STORAGE}" = "consul" ]]; then
 fi
 
 # Print installed versions
-echo `vault --vesion`
-echo `consul --vesion`
-
+vault --version
+consul --version
