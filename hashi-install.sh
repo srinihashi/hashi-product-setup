@@ -32,12 +32,12 @@ echo Product URL: $PRODUCT_URL
 # Install unzip
 if [ "$OS" = "linux" ]; then
   echo "Installing unzip package..."
-  #sudo dnf -y install unzip
+  sudo dnf -y install unzip
 fi
 
 if [ "$OS" = "darwin" ]; then
   echo "Installing unzip package..."
-  #sudo brew -y install unzip
+  sudo brew -y install unzip
 fi
 
 # Download Hashi Product
