@@ -60,3 +60,8 @@ if [[ "${PRODUCT}" = "vault" && "${BACKEND_STORAGE}" = "consul" ]]; then
   # Unzip Consul binaries
   sudo unzip -o /tmp/${PRODUCT}.zip -d /usr/local/bin/.
 fi
+
+# Print installed versions
+echo `vault --vesion`
+echo `consul --vesion`
+
