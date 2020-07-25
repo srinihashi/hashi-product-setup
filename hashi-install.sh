@@ -38,6 +38,9 @@ echo Product URL: $PRODUCT_URL
 # Install unzip
 if [ "$OS" = "linux" ]; then
   echo "Installing unzip package..."
+  # If RHEL
+  sudo dnf -y install unzip
+  # If Ubuntu
   sudo dnf -y install unzip
 fi
 
@@ -57,16 +60,19 @@ if [[ "${PRODUCT}" = "vault" && "${BACKEND_STORAGE}" = "consul" ]]; then
   PRODUCT=$BACKEND_STORAGE
   # NEED TO ENHANCE
   PRODUCT_VERSION=$CONSUL_LATEST
-  PRODUCT_URL=$PRODUCT_BASE_URL/${PRODUCT}/${PRODUCT_VERSION}${PKG}/${PRODUCT}_${PRODUCT_VERSION}${PKG}_${OS}_${ARCH}.zip
+  PRODUCT_URL=$PRODUCT_BASE_URL/${BACKEND_STORAGE}/${PRODUCT_VERSION}${PKG}/${BACKEND_STORAGE}_${PRODUCT_VERSION}${PKG}_${OS}_${ARCH}.zip
   echo Product URL: $PRODUCT_URL
 
   # Download Consul
   curl $PRODUCT_URL > /tmp/${BACKEND_STORAGE}.zip
 
   # Unzip Consul binaries
-  sudo unzip -o /tmp/${PRODUCT}.zip -d /usr/local/bin/.
+  sudo unzip -o /tmp/${BACKEND_STORAGE}.zip -d /usr/local/bin/.
 fi
 
 # Print installed versions
-vault --version
-consul --version
+$PRODUCT --version
+
+if [ "${BACKEND_STORAGE}" = "consul" ]; then
+  $BACKEND_STORAGE --version
+fi
