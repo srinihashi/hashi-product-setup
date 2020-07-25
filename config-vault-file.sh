@@ -3,7 +3,7 @@
 # Display --help [Command options]
 if [ $1 = "--help" ]; 
 then
-     echo "USAGE: #config-vault-file.sh <product[vault | consul | nomad]> <backend_storage [file | raft | consul] <config_dir>"
+     echo "USAGE: #config-vault-file.sh <product[vault | consul | nomad]> <backend_storage [file | raft | consul] <config_dir> <log_dir>"
      exit
 fi
 
@@ -12,6 +12,7 @@ PRODUCT=vault
 PRODUCT_PROJECT=""
 #PRODUCT_CONFIG_PATH=/etc/${PRODUCT}.d
 PRODUCT_CONFIG_DIR=$3
+LOG_DIR=$4
 PRODUCT_CONFIG_FILE=${PRODUCT_CONFIG_DIR}/${PRODUCT}.hcl
 TMP_FILE=/tmp/${PRODUCT}.service
 SERVICE_FILE=/etc/systemd/system/${PRODUCT}.service
@@ -50,7 +51,7 @@ AmbientCapabilities=CAP_IPC_LOCK
 Capabilities=CAP_IPC_LOCK+ep
 CapabilityBoundingSet=CAP_SYSLOG CAP_IPC_LOCK
 NoNewPrivileges=yes
-ExecStart=/usr/local/bin/${PRODUCT} server -config=${PRODUCT_CONFIG_DIR}
+ExecStart=/usr/local/bin/${PRODUCT} server -config=${PRODUCT_CONFIG_DIR} > ${LOG_DIR}
 ExecReload=/bin/kill --signal HUP $MAINPID
 KillMode=process
 KillSignal=SIGINT
@@ -71,7 +72,10 @@ if [ -n $SERVICE_FILE ]; then
 fi
 
 sleep 3
-
+# Enable vault service and start it
 sudo systemctl enable ${PRODUCT}.service
 sudo systemctl start ${PRODUCT}.service
+
+sleep 2
+#Check vault status
 vault status
