@@ -41,7 +41,7 @@ if [ "$OS" = "linux" ]; then
   # If RHEL
   sudo dnf -y install unzip
   # If Ubuntu
-  sudo dnf -y install unzip
+  sudo apt install unzip
 fi
 
 if [ "$OS" = "darwin" ]; then
