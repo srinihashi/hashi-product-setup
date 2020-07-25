@@ -17,8 +17,22 @@ VAULT_LATEST=1.4.3
 CONSUL_LATEST=1.8.0
 PRODUCT_BASE_URL=https://releases.hashicorp.com
 OS=`uname -a | awk '{print tolower ($1)}'`
-#NEED TO FIX THIS
-ARCH=386
+
+#Check Architecture
+ARCH =  `uname -a | awk '{print tolower ($14)}'`
+case $ARCH in
+x86_64)
+  ARCH=386
+  ;;
+
+aarch64)
+  ARCH=arm64
+  ;;
+  
+*)
+  echo "Architecture: UNKNOWN"
+  ;;
+esac
 
 #Print
 echo Proudct Type: ${PKG^}
@@ -39,9 +53,22 @@ echo Product URL: $PRODUCT_URL
 if [ "$OS" = "linux" ]; then
   echo "Installing unzip package..."
   # If RHEL
-  sudo dnf -y install unzip
+  if [[ `cat /proc/version` == *"Red Hat"* ]];
+  then
+    sudo dnf -y install unzip
+  fi
+
   # If Ubuntu
-  sudo apt install unzip
+  if [[ `cat /proc/version` == *"Ubuntu"* ]];
+  then
+    sudo apt-get install -y unzip
+  fi
+  
+  # If SUSE
+  if [[ `cat /proc/version` == *"SUSE"* ]];
+  then
+    sudo zypper install unzip
+  fi
 fi
 
 if [ "$OS" = "darwin" ]; then
