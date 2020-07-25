@@ -19,7 +19,7 @@ PRODUCT_BASE_URL=https://releases.hashicorp.com
 OS=`uname -a | awk '{print tolower ($1)}'`
 
 #Check Architecture
-ARCH =  `uname -a | awk '{print tolower ($14)}'`
+ARCH=`uname -a | awk '{print tolower ($14)}'`
 case $ARCH in
 x86_64)
   ARCH=386
