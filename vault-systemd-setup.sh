@@ -49,7 +49,7 @@ AmbientCapabilities=CAP_IPC_LOCK
 Capabilities=CAP_IPC_LOCK+ep
 CapabilityBoundingSet=CAP_SYSLOG CAP_IPC_LOCK
 NoNewPrivileges=yes
-ExecStart=/usr/local/bin/${PRODUCT} server -config=${PRODUCT_CONFIG_DIR} > ${LOG_DIR}
+ExecStart=/usr/local/bin/${PRODUCT} server -config=${PRODUCT_CONFIG_DIR} > ${LOG_DIR}.${PRODUCT}.log
 ExecReload=/bin/kill --signal HUP $MAINPID
 KillMode=process
 KillSignal=SIGINT
