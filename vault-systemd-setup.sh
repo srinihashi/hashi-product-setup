@@ -2,7 +2,7 @@
 
 # Display --help [Command options]
 if [ $1 = "--help" ]; then
-     echo "USAGE: #hashi-systemd-setup.sh <product[vault | consul | nomad]> <backend_storage [consul | raft] <config_dir> <log_dir>"
+     echo "USAGE: #hashi-systemd-setup.sh <product[vault | consul | nomad]> <config_dir> <log_dir>"
      exit
 fi
 
@@ -15,14 +15,16 @@ else
   PRODUCT_PROJECT=""
 fi
 
-PRODUCT_CONFIG_DIR=$3
+#BACKEND_STORAGE=$2
+#STORAGE_PATH=$3
+PRODUCT_CONFIG_DIR=$2/${PRODUCT}.d
 #PRODUCT_CONFIG_PATH=/etc/${PRODUCT}.d
 PRODUCT_CONFIG_FILE=${PRODUCT}.hcl
 TMP_FILE=/tmp/${PRODUCT}.service
 SERVICE_FILE=/etc/systemd/system/${PRODUCT}.service
 
 # Set dir for product logs
-LOG_DIR=$4
+LOG_DIR=$3
 
 #Print
 echo Service to setup: ${PRODUCT^}
@@ -49,7 +51,7 @@ AmbientCapabilities=CAP_IPC_LOCK
 Capabilities=CAP_IPC_LOCK+ep
 CapabilityBoundingSet=CAP_SYSLOG CAP_IPC_LOCK
 NoNewPrivileges=yes
-ExecStart=/usr/local/bin/${PRODUCT} server -config=${PRODUCT_CONFIG_DIR} > ${LOG_DIR}.${PRODUCT}.log
+ExecStart=/usr/local/bin/${PRODUCT} server -config=${PRODUCT_CONFIG_DIR}
 ExecReload=/bin/kill --signal HUP $MAINPID
 KillMode=process
 KillSignal=SIGINT
@@ -65,10 +67,7 @@ LimitMEMLOCK=infinity
 [Install]
 WantedBy=multi-user.target" > $TMP_FILE
 
-if [ -n $SERVICE_FILE ]; then
-  sudo mv $TMP_FILE $SERVICE_FILE
-  ls -l $SERVICE_FILE
-fi
+sudo mv $TMP_FILE $SERVICE_FILE
 
 sleep 3
 # Enable vault service and start it
