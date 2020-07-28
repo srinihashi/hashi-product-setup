@@ -1,81 +1,96 @@
 #!/bin/bash
 
 # Display --help [Command options]
-if [ $1 = "--help" ]; 
-then
-     echo "USAGE: #config-vault-file.sh <product[vault | consul | nomad]> <backend_storage [file | raft | consul] <config_dir> <log_dir>"
+if [ $1 = "--help" ]; then
+     echo "USAGE: #hashi-systemd-setup.sh <product[vault | consul | nomad]> <backend_storage [file | raft | consul] <storage_path> <config_dir> <log_dir>"
      exit
 fi
 
 # Set input arguments
-PRODUCT=vault
-PRODUCT_PROJECT=""
-#PRODUCT_CONFIG_PATH=/etc/${PRODUCT}.d
-PRODUCT_CONFIG_DIR=$3
-LOG_DIR=$4
-PRODUCT_CONFIG_FILE=${PRODUCT_CONFIG_DIR}/${PRODUCT}.hcl
-TMP_FILE=/tmp/${PRODUCT}.service
-SERVICE_FILE=/etc/systemd/system/${PRODUCT}.service
-
-if [ "${PRODUCT,,}" = "vault" ]; then
-  PRODUCT_PROJECT=project
-fi
-
-# Creat product config dir if it does not exist
-if [ -n $PRODUCT_CONFIG_DIR ];
+PRODUCT=$1
+if [ "${PRODUCT,,}" = "vault" ];
 then
-  mkdir -p ${PRODUCT_CONFIG_DIR}
+  PRODUCT_PROJECT=project
+else
+  PRODUCT_PROJECT=""
 fi
 
-#Print
-echo Service to setup: ${PRODUCT^}
+BACKEND_STORAGE=$2
+STORAGE_PATH=$3
+PRODUCT_CONFIG_DIR=$4/${PRODUCT}.d
+#PRODUCT_CONFIG_PATH=/etc/${PRODUCT}.d
+PRODUCT_CONFIG_FILE=${PRODUCT}.hcl
+#TMP_FILE=/tmp/${PRODUCT}.service
+#SERVICE_FILE=/etc/systemd/system/${PRODUCT}.service
 
-# Create systemd service file
-echo "[Unit]
-Description="HashiCorp ${PRODUCT^} - A tool for managing secrets"
-Documentation=https://www.${PRODUCT}${PRODUCT_PROJECT}.io/docs/
-Requires=network-online.target
-After=network-online.target
-ConditionFileNotEmpty=${PRODUCT_CONFIG_FILE}
-StartLimitIntervalSec=60
-StartLimitBurst=3
-[Service]
-User=root
-Group=root
-ProtectSystem=full
-ProtectHome=read-only
-PrivateTmp=yes
-PrivateDevices=yes
-SecureBits=keep-caps
-AmbientCapabilities=CAP_IPC_LOCK
-Capabilities=CAP_IPC_LOCK+ep
-CapabilityBoundingSet=CAP_SYSLOG CAP_IPC_LOCK
-NoNewPrivileges=yes
-ExecStart=/usr/local/bin/${PRODUCT} server -config=${PRODUCT_CONFIG_DIR} > ${LOG_DIR}
-ExecReload=/bin/kill --signal HUP $MAINPID
-KillMode=process
-KillSignal=SIGINT
-Restart=on-failure
-RestartSec=5
-TimeoutStopSec=30
-StartLimitInterval=60
-StartLimitIntervalSec=60
-StartLimitBurst=3
-LimitNOFILE=65536
-LimitMEMLOCK=infinity
-[Install]
-WantedBy=multi-user.target" > $TMP_FILE
+# Set dir for product logs
+LOG_DIR=$5
 
-if [ -n $SERVICE_FILE ]; then
-  sudo mv $TMP_FILE $SERVICE_FILE
-  ls -l $SERVICE_FILE
+# Create Product config file
+echo "
+disable_mlock = true
+ui = true
+log_level = \"Debug\"
+" > /tmp/${PRODUCT}.hcl
+
+case $BACKEND_STORAGE in
+file)
+  sudo mkdir -p ${STORAGE_PATH}/${PRODUCT}/data
+  echo "
+  storage \"file\" {
+  path    = \"${STORAGE_PATH}/${PRODUCT}/data/\"
+  }
+  " >> /tmp/${PRODUCT}.hcl
+  ;;
+
+raft)
+  sudo mkdir -p ${STORAGE_PATH}/${PRODUCT}/raft
+  echo "
+  storage \"raft\" {
+  path    = \"${STORAGE_PATH}/${PRODUCT}/raft/\"
+  }
+  " >> /tmp/${PRODUCT}.hcl
+  ;;
+
+consul)
+  echo "
+  storage \"consul\" {
+  path    = \"${STORAGE_PATH}/${PRODUCT}/raft/\"
+  }
+  " >> /tmp/${PRODUCT}.hcl
+  ;;
+
+*)
+  ;;
+esac
+
+echo "
+listener \"tcp\" {
+ address     = \"127.0.0.1:8200\"
+ tls_disable = 1
+ telemetry {
+    unauthenticated_metrics_access = true
+  }
+}
+" >> /tmp/${PRODUCT}.hcl
+
+# Create product config dir if not exists
+if [ -n ${PRODUCT_CONFIG_DIR} ]; then
+  sudo mkdir -p $PRODUCT_CONFIG_DIR
 fi
+
+# Move product config file to config dir
+sudo mv /tmp/${PRODUCT}.hcl ${PRODUCT_CONFIG_DIR}/.
 
 sleep 3
-# Enable vault service and start it
-sudo systemctl enable ${PRODUCT}.service
-sudo systemctl start ${PRODUCT}.service
+# Print config
+echo "... created config dirs and files"
+ls -la ${PRODUCT_CONFIG_DIR}
+ls -la ${BACKEND_STORAGE}
+ls -ls ${STORAGE_PATH}
+cat ${PRODUCT_CONFIG_DIR}/${PRODUCT_CONFIG_FILE}
 
-sleep 2
-#Check vault status
-vault status
+sleep 3
+echo "#################################"
+echo "## ${PRODUCT} config complete! ##"
+echo "#################################"
