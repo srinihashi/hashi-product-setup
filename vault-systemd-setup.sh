@@ -73,5 +73,16 @@ sudo systemctl enable ${PRODUCT}.service
 sudo systemctl start ${PRODUCT}.service
 
 sleep 2
+# Set env variables
+case $PRODUCT in
+vault)
+  export VAULT_ADDR="http://127.0.0.1:8200"
+  ;;
+
+*)
+  echo "Nothing to set"
+  ;;
+esac
+
 #Check Hashi Product status
 ${PRODUCT} status
