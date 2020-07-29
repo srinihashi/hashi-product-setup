@@ -10,8 +10,13 @@ fi
 PRODUCT=$1
 if [ "${PRODUCT,,}" = "vault" ];
 then
-  AUTO_UNSEAL=azure
   PRODUCT_PROJECT=project
+  AUTO_UNSEAL=azure
+  TENANT_ID="0e3e2e88-8caf-41ca-b4da-e3b33b6c52ec
+  CLIENT_ID="81a29d4b-40b1-41e5-89a0-6b9f5c8840c4"
+  CLIENT_SECRET="eR6Anls-3KZ:6ca3lw_TEXkBkd_SoZ1L"
+  VAULT_NAME="Srini-Vault-Auto-Unseal"
+  KEY_NAME="Vault-Unseal-Key2"
 else
   PRODUCT_PROJECT=""
 fi
@@ -57,12 +62,12 @@ listener \"tcp\" {
 case $AUTO_UNSEAL in
 azure)
   echo "
-  seal "azurekeyvault" {
-    tenant_id      = "0e3e2e88-8caf-41ca-b4da-e3b33b6c52ec"
-    client_id      = "81a29d4b-40b1-41e5-89a0-6b9f5c8840c4"
-    client_secret  = "eR6Anls-3KZ:6ca3lw_TEXkBkd_SoZ1L"
-    vault_name     = "Srini-Vault-Auto-Unseal"
-    key_name       = "Vault-Unseal-Key2"
+  seal \"azurekeyvault\" {
+    tenant_id      = \"${TENANT_ID}"\
+    client_id      = \"${CLIENT_ID}\"
+    client_secret  = \"${CLIENT_SECRET}\"
+    vault_name     = \"${VAULT_NAME}\"
+    key_name       = \"${KEY_NAME}\"
   }
   " >> /tmp/${PRODUCT}.hcl
   ;;
