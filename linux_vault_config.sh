@@ -63,7 +63,7 @@ case $AUTO_UNSEAL in
 azure)
   echo "
   seal \"azurekeyvault\" {
-    tenant_id      = \"${TENANT_ID}"\
+    tenant_id      = \"${TENANT_ID}\"
     client_id      = \"${CLIENT_ID}\"
     client_secret  = \"${CLIENT_SECRET}\"
     vault_name     = \"${VAULT_NAME}\"
