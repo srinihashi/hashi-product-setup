@@ -27,7 +27,8 @@ PRODUCT_CONFIG_FILE=${PRODUCT}.hcl
 LOG_DIR=$5
 
 # Set host IP Address
-HOST_IP=`ifconfig | sed -n '2p' | awk '{ print $2 }'`
+#HOST_IP=`ifconfig | sed -n '2p' | awk '{ print $2 }'`
+HOST_IP=`curl http://checkip.amazonaws.com`
 
 # Set hostname
 HOST_NAME=`hostname`
