@@ -12,11 +12,11 @@ if [ "${PRODUCT,,}" = "vault" ];
 then
   PRODUCT_PROJECT=project
   AUTO_UNSEAL=$6
-  TENANT_ID="0e3e2e88-8caf-41ca-b4da-e3b33b6c52ec"
-  CLIENT_ID="81a29d4b-40b1-41e5-89a0-6b9f5c8840c4"
-  CLIENT_SECRET="eR6Anls-3KZ:6ca3lw_TEXkBkd_SoZ1L"
-  VAULT_NAME="Srini-Vault-Auto-Unseal"
-  KEY_NAME="Vault-Unseal-Key2"
+  TENANT_ID=""
+  CLIENT_ID=""
+  CLIENT_SECRET=""
+  VAULT_NAME=""
+  KEY_NAME=""
 else
   PRODUCT_PROJECT=""
 fi
