@@ -25,7 +25,7 @@ curl -k ${URL} -o ${TMP_FILE}
 sudo chmod a+x ${TMP_FILE}
 ${TMP_FILE} ${PRODUCT} ${BACKEND_STORAGE} ${STORAGE_PATH} ${PRODUCT_CONFIG_DIR} ${LOG_DIR}
 
-SYSTEMD_SCRIPT_URL=https://raw.githubusercontent.com/srinihashi/hashi-product-setup/master/${OS)_${PRODUCT}_systemd.sh
+SYSTEMD_SCRIPT_URL=https://raw.githubusercontent.com/srinihashi/hashi-product-setup/master/${OS}_${PRODUCT}_systemd.sh
 TMP_SYSTEMD_FILE=/tmp/${PRODUCT}-systemd.sh
 
 URL=${SYSTEMD_SCRIPT_URL}
