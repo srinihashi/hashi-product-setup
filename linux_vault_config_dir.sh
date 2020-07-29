@@ -26,11 +26,30 @@ PRODUCT_CONFIG_FILE=${PRODUCT}.hcl
 # Set dir for product logs
 LOG_DIR=$5
 
+# Set host IP Address
+HOST_IP=`ifconfig | sed -n '2p' | awk '{ print $2 }'`
+
+# Set hostname
+HOST_NAME=`hostname`
+
 # Create Product config file
 echo "
 disable_mlock = true
 ui = true
 log_level = \"Debug\"
+listener \"tcp\" {
+ address     = \"127.0.0.1:8200\"
+ tls_disable = 1
+ telemetry {
+    unauthenticated_metrics_access = true
+  }
+}
+
+listener \"tcp\" {
+  address = \"${HOST_IP}:8200\"
+  cluster_address = \"${HOST_IP}:8201\"
+  tls_disable = true
+}
 " > /tmp/${PRODUCT}.hcl
 
 case $BACKEND_STORAGE in
@@ -48,7 +67,10 @@ raft)
   echo "
   storage \"raft\" {
   path    = \"${STORAGE_PATH}/${PRODUCT}/raft/\"
+  node_id = \"${HOST_NAME}\"
   }
+  api_addr = \"http://${HOST_IP}:8200\"
+  cluster_addr = \"http://${HOST_IP}:8201\"
   " >> /tmp/${PRODUCT}.hcl
   ;;
 
@@ -64,15 +86,6 @@ consul)
   ;;
 esac
 
-echo "
-listener \"tcp\" {
- address     = \"127.0.0.1:8200\"
- tls_disable = 1
- telemetry {
-    unauthenticated_metrics_access = true
-  }
-}
-" >> /tmp/${PRODUCT}.hcl
 
 # Create product config dir if not exists
 if [ -n ${PRODUCT_CONFIG_DIR} ]; then
@@ -92,5 +105,5 @@ cat ${PRODUCT_CONFIG_DIR}/${PRODUCT_CONFIG_FILE}
 
 sleep 3
 echo "#################################"
-echo "## ${PRODUCT} config dir complete! ##"
+echo "## ${PRODUCT} config complete! ##"
 echo "#################################"
