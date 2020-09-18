@@ -2,21 +2,39 @@
 
 # Display --help [Command options]
 if [ $1 = "--help" ]; then
-     echo "USAGE: #hashi-systemd-setup.sh <product[vault | consul | nomad]> <config_dir> <log_dir>"
+     echo "USAGE: #hashi-systemd-setup.sh <product[vault | consul | nomad]> <config_dir [/etc]> <log_dir [/var/log]>"
      exit
 fi
 
 # Set input arguments
-PRODUCT=$1
-if [ "${PRODUCT,,}" = "vault" ];
-then
-  PRODUCT_PROJECT=project
-else
-  PRODUCT_PROJECT=""
-fi
-
 PRODUCT_CONFIG_DIR=$2/${PRODUCT}.d
 PRODUCT_CONFIG_FILE=${PRODUCT}.hcl
+PRODUCT_PROJECT=""
+PRODUCT=$1
+case ${PRODUCT} in
+vault)
+  PRODUCT_PROJECT=project
+  DESCRIPTION="HashiCorp ${PRODUCT^} - A tool for managing secrets"
+  EXEC_START="/usr/local/bin/${PRODUCT} server -config=${PRODUCT_CONFIG_DIR} > ${LOG_PATH}"
+  EXEC_RELOAD="/bin/kill --signal HUP ${MAINPID}"
+  EXEC_STOP=""
+  ;;
+
+consul)
+  DESCRIPTION="HashiCorp ${PRODUCT^} - A service mesh solution"
+  EXEC_START="consul agent -config-dir=${PRODUCT_CONFIG_DIR}/"
+  EXEC_RELOAD="consul reload"
+  EXEC_STOP="consul leave"
+  ;;
+  
+*)
+  echo "Nothing to set"
+  ;;
+esac
+
+
+
+
 TMP_FILE=/tmp/${PRODUCT}.service
 SERVICE_FILE=/etc/systemd/system/${PRODUCT}.service
 
@@ -29,7 +47,7 @@ echo Service to setup: ${PRODUCT^}
 
 # Create systemd service file
 echo "[Unit]
-Description="HashiCorp ${PRODUCT^} - A tool for managing secrets"
+Description=${DESCRIPTION}
 Documentation=https://www.${PRODUCT}${PRODUCT_PROJECT}.io/docs/
 Requires=network-online.target
 After=network-online.target
@@ -48,8 +66,9 @@ AmbientCapabilities=CAP_IPC_LOCK
 Capabilities=CAP_IPC_LOCK+ep
 CapabilityBoundingSet=CAP_SYSLOG CAP_IPC_LOCK
 NoNewPrivileges=yes
-ExecStart=/usr/local/bin/${PRODUCT} server -config=${PRODUCT_CONFIG_DIR} > ${LOG_PATH}
-ExecReload=/bin/kill --signal HUP $MAINPID
+ExecStart=${EXEC_START}
+ExecReload=${EXEC_RELOAD}
+ExecStop=${EXEC_STOP}
 KillMode=process
 KillSignal=SIGINT
 Restart=on-failure
