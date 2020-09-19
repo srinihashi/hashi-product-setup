@@ -29,6 +29,10 @@ if [ -n ${LOG_DIR} ]; then
   sudo mkdir -p ${LOG_DIR}
 fi
 
+# Create data dir if not exists
+if [ -n ${DATA_DIR} ]; then
+  sudo mkdir -p ${DATA_DIR}
+fi
 
 # Set host IP Address
 #HOST_IP=`ifconfig | sed -n '2p' | awk '{ print $2 }'`
