@@ -1,8 +1,4 @@
-# Display --help [Command options]
-if [ $1 = "--help" ]; then
-     echo "USAGE: #linux_consul_config.sh <product[vault | consul | nomad]> <config_dir> <log_dir> <data_dir> <datacenter_name>"
-     exit
-fi
+
 echo "testing if variable declared at the end will work..."
 echo ${TEST}
 
