@@ -15,7 +15,7 @@ fi
 DATA_DIR=${DATA_DIR}/${PRODUCT}
 
 # Set datacenter
-if [ -n ${DATACENTER} ]; then
+if [ -z ${DATACENTER} ]; then
   DATACENTER=dc1
 fi
 
