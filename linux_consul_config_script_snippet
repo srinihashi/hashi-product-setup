@@ -1,0 +1,60 @@
+# Display --help [Command options]
+if [ $1 = "--help" ]; then
+     echo "USAGE: #linux_consul_config.sh <product[vault | consul | nomad]> <config_dir> <log_dir> <data_dir> <datacenter_name>"
+     exit
+fi
+echo "testing if variable declared at the end will work..."
+echo ${TEST}
+
+# Set input arguments
+PRODUCT=$1
+PRODUCT_CONFIG_DIR=$2/${PRODUCT}.d
+PRODUCT_CONFIG_FILE=${PRODUCT}.hcl
+# Set dir for product logs
+LOG_DIR=$3
+DATA_DIR=$4/${PRODUCT}
+DATACENTER=dc1
+if [ -n $5 ]; then
+  DATACENTER=$5
+fi
+
+# Create product config dir if not exists
+if [ -n ${PRODUCT_CONFIG_DIR} ]; then
+  sudo mkdir -p ${PRODUCT_CONFIG_DIR}
+fi
+
+# Create log dir if not exists
+if [ -n ${LOG_DIR} ]; then
+  sudo mkdir -p ${LOG_DIR}
+fi
+
+
+# Set host IP Address
+#HOST_IP=`ifconfig | sed -n '2p' | awk '{ print $2 }'`
+echo "Checking host ip...."
+HOST_IP=`curl http://checkip.amazonaws.com`
+
+# Set hostname
+HOST_NAME=`hostname`
+
+# Create Product config file
+echo "
+#Create Consul config file
+datacenter = \"${DATACENTER}\"
+data_dir = \"${DATA_DIR}\"
+
+   " >> /tmp/${PRODUCT}.hcl
+
+# Move product config file to config dir
+sudo mv /tmp/${PRODUCT}.hcl ${PRODUCT_CONFIG_DIR}/.
+
+sleep 3
+# Print config
+echo "... created config dirs and files"
+ls -la ${PRODUCT_CONFIG_DIR}
+cat ${PRODUCT_CONFIG_DIR}/${PRODUCT_CONFIG_FILE}
+
+sleep 3
+echo "#################################"
+echo "## ${PRODUCT} config complete! ##"
+echo "#################################"
