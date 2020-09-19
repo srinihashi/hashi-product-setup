@@ -49,10 +49,10 @@ echo "
 #Create Consul config file
 server = ${SERVER}
 node_name = \"${NODE_NAME}\"
-ui = \"${UI}\"
+ui = ${UI}
 datacenter = \"${DATACENTER}\"
 data_dir = \"${DATA_DIR}\"
-bootstrap_expect = \"${BOOTSTRAP_EXPECT}\"
+bootstrap_expect = ${BOOTSTRAP_EXPECT}
 
    " >> /tmp/${PRODUCT}.hcl
 
