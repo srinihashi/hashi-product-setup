@@ -5,14 +5,27 @@
 
 # Set Product [default: "consul"]
 PRODUCT=consul
+
 # Set Product config directory [default: "/etc"]
 CONFIG_DIR=/etc
+
 # Set dir for product logs [default: "/var/log"]
 LOG_DIR=/var/log
+
 # Set data directory [default: "/opt"]
 DATA_DIR=/opt
+
 # Set datacenter [default: "dc1"]
 DATACENTER=us-west-dc
+
+# Set server type [default: false (client)]
+SERVER=true
+
+# Set UI [default: true]
+UI=true
+
+# Set bootstrap_expect [default: 3]
+BOOTSTRAP_EXPECT=3
 
 # **************************************************************
 # END - User defined values
