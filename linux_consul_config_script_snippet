@@ -1,13 +1,22 @@
 
 # Set input arguments
-PRODUCT_CONFIG_DIR=$2/${PRODUCT}.d
+PRODUCT_CONFIG_DIR=${CONFIG_DIR}/${PRODUCT}.d
 PRODUCT_CONFIG_FILE=${PRODUCT}.hcl
-# Set dir for product logs
-LOG_DIR=$3
-DATA_DIR=$4/${PRODUCT}
-DATACENTER=dc1
-if [ -n $5 ]; then
-  DATACENTER=$5
+# Set product log directory
+if [ -n ${LOG_DIR} ]; then
+  LOG_DIR=/var/log
+fi
+LOG_DIR=${LOG_DIR}/${PRODUCT}
+
+# Set data directory
+if [ -n ${DATA_DIR} ]; then
+  DATA_DIR=/opt
+fi
+DATA_DIR=${DATA_DIR}/${PRODUCT}
+
+# Set datacenter
+if [ -n ${DATACENTER} ]; then
+  DATACENTER=dc1
 fi
 
 # Create product config dir if not exists
