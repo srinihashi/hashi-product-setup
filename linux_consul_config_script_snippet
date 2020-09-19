@@ -1,9 +1,5 @@
 
-echo "testing if variable declared at the end will work..."
-echo ${TEST}
-
 # Set input arguments
-PRODUCT=$1
 PRODUCT_CONFIG_DIR=$2/${PRODUCT}.d
 PRODUCT_CONFIG_FILE=${PRODUCT}.hcl
 # Set dir for product logs
