@@ -39,14 +39,20 @@ fi
 echo "Checking host ip...."
 HOST_IP=`curl http://checkip.amazonaws.com`
 
-# Set hostname
-HOST_NAME=`hostname`
+# Set node_name
+if [ -z ${NODE_NAME} ]; then
+  NODE_NAME=`hostname`
+fi
 
 # Create Product config file
 echo "
 #Create Consul config file
+server = ${SERVER}
+node_name = \"${NODE_NAME}\"
+ui = \"${UI}\"
 datacenter = \"${DATACENTER}\"
 data_dir = \"${DATA_DIR}\"
+bootstrap_expect = \"${BOOTSTRAP_EXPECT}\"
 
    " >> /tmp/${PRODUCT}.hcl
 
