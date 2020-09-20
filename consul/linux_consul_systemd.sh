@@ -90,10 +90,24 @@ sudo systemctl enable ${PRODUCT}.service
 sudo systemctl start ${PRODUCT}.service
 
 sleep 2
-# Set env variables
+# Set env variables and check status
 case $PRODUCT in
 vault)
   export VAULT_ADDR="http://127.0.0.1:8200"
+  #Check Hashi Product status
+  ${PRODUCT} status
+  ;;
+
+consul)
+  #Set any enviroment variables if needed
+  #Check consul status/members
+  ${PRODUCT} members
+  ;;
+
+nomad)
+  #Set any environment variables if needed
+  #Check nomad status/members
+  #${PRODUCT} members
   ;;
 
 *)
@@ -101,5 +115,3 @@ vault)
   ;;
 esac
 
-#Check Hashi Product status
-${PRODUCT} status
