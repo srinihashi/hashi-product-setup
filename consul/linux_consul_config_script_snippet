@@ -19,75 +19,96 @@ if [ -z ${DATACENTER} ]; then
   DATACENTER=dc1
 fi
 
-# Create product config dir if not exists
-if [ -n ${PRODUCT_CONFIG_DIR} ]; then
-  sudo mkdir -p ${PRODUCT_CONFIG_DIR}
+# NEED FIX: set and pass CONFIG_SETUP as TF variable
+#CONFIG_SETUP=true
+
+if [${CONFIG_SETUP}]; then
+  sleep 3
+  echo "#################################"
+  echo "## ${PRODUCT} config setup start!   ##"
+  echo "#################################"
+
+
+  # Create product config dir if not exists
+  if [ -n ${PRODUCT_CONFIG_DIR} ]; then
+    sudo mkdir -p ${PRODUCT_CONFIG_DIR}
+  fi
+
+  # Create log dir if not exists
+  if [ -n ${LOG_DIR} ]; then
+    sudo mkdir -p ${LOG_DIR}
+  fi
+
+  # Create data dir if not exists
+  if [ -n ${DATA_DIR} ]; then
+    sudo mkdir -p ${DATA_DIR}
+  fi
+
+  # Set host IP Address
+  #HOST_IP=`ifconfig | sed -n '2p' | awk '{ print $2 }'`
+  echo "Checking host ip...."
+  HOST_IP=`curl http://checkip.amazonaws.com`
+
+  # Set node_name
+  if [ -z ${NODE_NAME} ]; then
+    NODE_NAME=`hostname`
+  fi
+
+  # Create Product config file
+  echo "
+  #Create Consul config file
+  server = ${SERVER}
+  node_name = \"${NODE_NAME}\"
+  ui = ${UI}
+  datacenter = \"${DATACENTER}\"
+  data_dir = \"${DATA_DIR}\"
+  bootstrap_expect = ${BOOTSTRAP_EXPECT}
+
+     " >> /tmp/${PRODUCT}.hcl
+
+  # Move product config file to config dir
+  sudo mv /tmp/${PRODUCT}.hcl ${PRODUCT_CONFIG_DIR}/.
+
+  sleep 3
+  # Print config
+  echo "... created config dirs and files"
+  ls -la ${PRODUCT_CONFIG_DIR}
+  cat ${PRODUCT_CONFIG_DIR}/${PRODUCT_CONFIG_FILE}
+
+  sleep 3
+  echo "#################################"
+  echo "## ${PRODUCT} config complete! ##"
+  echo "#################################"
 fi
 
-# Create log dir if not exists
-if [ -n ${LOG_DIR} ]; then
-  sudo mkdir -p ${LOG_DIR}
-fi
+# NEED FIX: set and pass SYSTEMD_SETUP as TF variable
+#SYSTEMD_SETUP=true
 
-# Create data dir if not exists
-if [ -n ${DATA_DIR} ]; then
-  sudo mkdir -p ${DATA_DIR}
-fi
+if [${SYSTEMD_SETUP}]; then
+  sleep 3
+  echo "#################################"
+  echo "## ${PRODUCT} systemd start!   ##"
+  echo "#################################"
+  # Fix: Need to pass INSTALL_BASE_URL
+  INSTALL_BASE_URL=https://raw.githubusercontent.com/srinihashi/hashi-product-setup/master
+  
+  # Fix: Need to pass OS
+  OS=linux
+  
+  SYSTEMD_SCRIPT=${OS}_${PRODUCT}_systemd.sh
+  `curl -H 'Cache-Control: no-cache' ${INSTALL_BASE_URL}/${PRODUCT}/${SYSTEMD_SCRIPT}?$(date +%s) -o ./${SYSTEMD_SCRIPT}`
+  sleep 3
+  sudo chmod a+x ./${SYSTEMD_SCRIPT}
+  echo "Running final consul config script...."
+  sleep 3
+  ./${SYSTEMD_SCRIPT} ${PRODUCT} ${PRODUCT_CONFIG_DIR} ${LOG_DIR} 
+  sleep 3
+  echo "#######################################"
+  echo "## ${PRODUCT} sytemd setup complete! ##"
+  echo "#######################################"
+if
 
-# Set host IP Address
-#HOST_IP=`ifconfig | sed -n '2p' | awk '{ print $2 }'`
-echo "Checking host ip...."
-HOST_IP=`curl http://checkip.amazonaws.com`
-
-# Set node_name
-if [ -z ${NODE_NAME} ]; then
-  NODE_NAME=`hostname`
-fi
-
-# Create Product config file
-echo "
-#Create Consul config file
-server = ${SERVER}
-node_name = \"${NODE_NAME}\"
-ui = ${UI}
-datacenter = \"${DATACENTER}\"
-data_dir = \"${DATA_DIR}\"
-bootstrap_expect = ${BOOTSTRAP_EXPECT}
-
-   " >> /tmp/${PRODUCT}.hcl
-
-# Move product config file to config dir
-sudo mv /tmp/${PRODUCT}.hcl ${PRODUCT_CONFIG_DIR}/.
-
-sleep 3
-# Print config
-echo "... created config dirs and files"
-ls -la ${PRODUCT_CONFIG_DIR}
-cat ${PRODUCT_CONFIG_DIR}/${PRODUCT_CONFIG_FILE}
-
-sleep 3
-echo "#################################"
-echo "## ${PRODUCT} config complete! ##"
-echo "#################################"
-
-sleep 3
-echo "#################################"
-echo "## ${PRODUCT} systemd start!   ##"
-echo "#################################"
-# Fix: Need to pass INSTALL_BASE_URL
-INSTALL_BASE_URL=https://raw.githubusercontent.com/srinihashi/hashi-product-setup/master
-
-# Fix: Need to pass OS
-OS=linux
-
-SYSTEMD_SCRIPT=${OS}_${PRODUCT}_systemd.sh
-`curl -H 'Cache-Control: no-cache' ${INSTALL_BASE_URL}/${PRODUCT}/${SYSTEMD_SCRIPT}?$(date +%s) -o ./${SYSTEMD_SCRIPT}`
-sleep 3
-sudo chmod a+x ./${SYSTEMD_SCRIPT}
-echo "Running final consul config script...."
-sleep 3
-./${SYSTEMD_SCRIPT} ${PRODUCT} ${PRODUCT_CONFIG_DIR} ${LOG_DIR} 
 sleep 3
 echo "#######################################"
-echo "## ${PRODUCT} sytemd setup complete! ##"
+echo "## ${PRODUCT} setup complete!        ##"
 echo "#######################################"
