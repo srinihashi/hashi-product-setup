@@ -69,3 +69,19 @@ sleep 3
 echo "#################################"
 echo "## ${PRODUCT} config complete! ##"
 echo "#################################"
+
+sleep 3
+echo "#################################"
+echo "## ${PRODUCT} systemd start!   ##"
+echo "#################################"
+# Fix: Need to pass INSTALL_BASE_URL
+INSTALL_BASE_URL=https://raw.githubusercontent.com/srinihashi/hashi-product-setup/master
+
+# Fix: Need to pass OS
+SYSTEMD_SCRIPT=${OS}_${PRODUCT}_systemd.sh
+`curl -H 'Cache-Control: no-cache' ${INSTALL_BASE_URL}/${PRODUCT}/${SYSTEMD_SCRIPT}?$(date +%s) -o ./${SYSTEMD_SCRIPT}`
+sleep 3
+sudo chmod a+x ./${SYSTEMD_SCRIPT}
+echo "Running final consul config script...."
+sleep 3
+./${SYSTEMD_SCRIPT}
