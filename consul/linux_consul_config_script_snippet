@@ -86,7 +86,7 @@ sleep 3
 sudo chmod a+x ./${SYSTEMD_SCRIPT}
 echo "Running final consul config script...."
 sleep 3
-./${SYSTEMD_SCRIPT}
+./${SYSTEMD_SCRIPT} ${PRODUCT} ${PRODUCT_CONFIG_DIR} ${LOG_DIR} 
 sleep 3
 echo "#######################################"
 echo "## ${PRODUCT} sytemd setup complete! ##"
