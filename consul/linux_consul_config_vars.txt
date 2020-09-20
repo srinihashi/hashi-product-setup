@@ -21,6 +21,9 @@ DATACENTER=us-west-dc
 # Set server type [default: false (client)]
 SERVER=true
 
+# Set node_name [default: <hostname>]
+NODE_NAME=node1
+
 # Set UI [default: true]
 UI=true
 
