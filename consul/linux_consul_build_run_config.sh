@@ -1,7 +1,9 @@
 #!/bin/bash
-SCRIPT="linux_consul_config.sh"
-SCRIPT_SNIPPET=https://raw.githubusercontent.com/srinihashi/hashi-product-setup/master/linux_consul_config_script_snippet
-VARS=https://raw.githubusercontent.com/srinihashi/hashi-product-setup/master/linux_consul_config_vars.vars
+PRODUCT=$1
+OS=$2
+SCRIPT="${OS}_${PRODUCT}_config.sh"
+SCRIPT_SNIPPET=https://raw.githubusercontent.com/srinihashi/hashi-product-setup/master/${PRODUCT}/${OS}_${PRODUCT}_config_script_snippet
+VARS=https://raw.githubusercontent.com/srinihashi/hashi-product-setup/master/${PRODUCT}/${OS}_${PRODUCT}_config_vars.vars
 echo "#!/bin/bash
 " > ./${SCRIPT}
 
