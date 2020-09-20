@@ -2,7 +2,7 @@
 
 # Display --help [Command options]
 if [ $1 = "--help" ]; then
-     echo "USAGE: #hashi-systemd-setup.sh <product[vault | consul | nomad]> <config_dir [/etc]> <log_dir [/var/log]>"
+     echo "USAGE: #linux_consul_systemd.sh <product[vault | consul | nomad]> <config_dir [/etc]> <log_dir [/var/log]>"
      exit
 fi
 
