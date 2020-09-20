@@ -7,10 +7,11 @@ if [ $1 = "--help" ]; then
 fi
 
 # Set input arguments
+PRODUCT=$1
 PRODUCT_CONFIG_DIR=$2/${PRODUCT}.d
 PRODUCT_CONFIG_FILE=${PRODUCT}.hcl
 PRODUCT_PROJECT=""
-PRODUCT=$1
+
 case ${PRODUCT} in
 vault)
   PRODUCT_PROJECT=project
