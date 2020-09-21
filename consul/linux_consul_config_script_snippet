@@ -19,9 +19,7 @@ if [ -z ${DATACENTER} ]; then
   DATACENTER=dc1
 fi
 
-# NEED FIX: set and pass CONFIG_SETUP as TF variable
-#CONFIG_SETUP=true
-
+# if CONFIG_SETUP=true, create <product>.hcl file
 if [ ${CONFIG_SETUP} == true ]; then
   sleep 3
   echo "#################################"
@@ -45,9 +43,9 @@ if [ ${CONFIG_SETUP} == true ]; then
   fi
 
   # Set host IP Address
-  #HOST_IP=`ifconfig | sed -n '2p' | awk '{ print $2 }'`
   echo "Checking host ip...."
-  HOST_IP=`curl http://checkip.amazonaws.com`
+  #HOST_IP=`curl http://checkip.amazonaws.com`
+  PRIVATE_IP=`curl http://169.254.169.254/latest/meta-data/local-ipv4`
 
   # Set node_name
   if [ -z ${NODE_NAME} ]; then
@@ -59,6 +57,7 @@ if [ ${CONFIG_SETUP} == true ]; then
   #Create Consul config file
   server = ${SERVER}
   node_name = \"${NODE_NAME}\"
+  bind_addr = \"${PRIVATE_IP}\"
   ui = ${UI}
   datacenter = \"${DATACENTER}\"
   data_dir = \"${DATA_DIR}\"
@@ -82,9 +81,8 @@ if [ ${CONFIG_SETUP} == true ]; then
   echo "#################################"
 fi
 
-# NEED FIX: set and pass SYSTEMD_SETUP as TF variable
-#SYSTEMD_SETUP=true
 
+# if SYSTEMD_SETUP=true, create systemd file and start <product> service
 if [ ${SYSTEMD_SETUP} == true ]; then
   sleep 3
   echo "#################################"
