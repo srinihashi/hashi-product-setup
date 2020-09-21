@@ -107,7 +107,7 @@ if [${SYSTEMD_SETUP} == true]; then
   echo "#######################################"
   echo "## ${PRODUCT} sytemd setup complete! ##"
   echo "#######################################"
-if
+fi
 
 sleep 3
 echo "#######################################"
