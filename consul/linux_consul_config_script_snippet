@@ -63,7 +63,7 @@ if [${CONFIG_SETUP}]; then
   datacenter = \"${DATACENTER}\"
   data_dir = \"${DATA_DIR}\"
   bootstrap_expect = ${BOOTSTRAP_EXPECT}
-  retry_join = [\"provider=aws tag_key=Hashi-Node tag_value=Consul-Server\"]
+  retry_join = [\"provider=${CLOUD_PROVIDER} tag_key=${TAG_NAME} tag_value=${TAG_VALUE}\"]
   
     " >> /tmp/${PRODUCT}.hcl
 
