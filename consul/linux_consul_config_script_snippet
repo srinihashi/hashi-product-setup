@@ -22,7 +22,7 @@ fi
 # NEED FIX: set and pass CONFIG_SETUP as TF variable
 #CONFIG_SETUP=true
 
-if [${CONFIG_SETUP} = true]; then
+if [${CONFIG_SETUP} == true]; then
   sleep 3
   echo "#################################"
   echo "## ${PRODUCT} config setup start!   ##"
@@ -85,7 +85,7 @@ fi
 # NEED FIX: set and pass SYSTEMD_SETUP as TF variable
 #SYSTEMD_SETUP=true
 
-if [${SYSTEMD_SETUP}]; then
+if [${SYSTEMD_SETUP} == true]; then
   sleep 3
   echo "#################################"
   echo "## ${PRODUCT} systemd start!   ##"
