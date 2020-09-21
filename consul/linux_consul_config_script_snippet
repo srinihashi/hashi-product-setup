@@ -63,8 +63,9 @@ if [${CONFIG_SETUP}]; then
   datacenter = \"${DATACENTER}\"
   data_dir = \"${DATA_DIR}\"
   bootstrap_expect = ${BOOTSTRAP_EXPECT}
-
-     " >> /tmp/${PRODUCT}.hcl
+  retry_join = [\"provider=aws tag_key=Hashi-Node tag_value=Consul-Server\"]
+  
+    " >> /tmp/${PRODUCT}.hcl
 
   # Move product config file to config dir
   sudo mv /tmp/${PRODUCT}.hcl ${PRODUCT_CONFIG_DIR}/.
