@@ -5,7 +5,7 @@ if [ $1 = "--help" ]; then
      echo "USAGE: #linux_consul_systemd.sh <product[vault | consul | nomad]> <config_dir [/etc]> <log_dir [/var/log]>"
      exit
 fi
-
+echo "[DEBUG] config dir: " $2
 # Set input arguments
 PRODUCT=$1
 PRODUCT_CONFIG_DIR=$2/${PRODUCT}.d
