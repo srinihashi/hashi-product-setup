@@ -47,6 +47,15 @@ if [ ${CONFIG_SETUP} == true ]; then
   #HOST_IP=`curl http://checkip.amazonaws.com`
   PRIVATE_IP=`curl http://169.254.169.254/latest/meta-data/local-ipv4`
 
+  # Set BIND_IP
+  if [ IP_PRIVATE-PUBLIC == "public" ]; then
+    BIND_IP = `curl http://checkip.amazonaws.com`
+  else
+    BIND_IP = `curl http://169.254.169.254/latest/meta-data/local-ipv4`
+  fi
+
+
+
   # Set node_name
   if [ -z ${NODE_NAME} ]; then
     NODE_NAME=`hostname`
@@ -57,13 +66,13 @@ if [ ${CONFIG_SETUP} == true ]; then
   #Create Consul config file
   server = ${SERVER}
   node_name = \"${NODE_NAME}\"
-  bind_addr = \"${PRIVATE_IP}\"
+  bind_addr = \"${BIND_IP}\"
   ui = ${UI}
   datacenter = \"${DATACENTER}\"
   data_dir = \"${DATA_DIR}\"
   bootstrap_expect = ${BOOTSTRAP_EXPECT}
   retry_join = [\"provider=${CLOUD_PROVIDER} tag_key=${TAG_NAME} tag_value=${TAG_VALUE}\"]
-  
+
     " >> /tmp/${PRODUCT}.hcl
 
   # Move product config file to config dir
@@ -90,17 +99,17 @@ if [ ${SYSTEMD_SETUP} == true ]; then
   echo "#################################"
   # Fix: Need to pass INSTALL_BASE_URL
   INSTALL_BASE_URL=https://raw.githubusercontent.com/srinihashi/hashi-product-setup/master
-  
+
   # Fix: Need to pass OS
   OS=linux
-  
+
   SYSTEMD_SCRIPT=${OS}_${PRODUCT}_systemd.sh
   `curl -H 'Cache-Control: no-cache' ${INSTALL_BASE_URL}/${PRODUCT}/${SYSTEMD_SCRIPT}?$(date +%s) -o ./${SYSTEMD_SCRIPT}`
   sleep 3
   sudo chmod a+x ./${SYSTEMD_SCRIPT}
   echo "Running final consul config script...."
   sleep 3
-  ./${SYSTEMD_SCRIPT} ${PRODUCT} ${CONFIG_DIR} ${LOG_DIR} 
+  ./${SYSTEMD_SCRIPT} ${PRODUCT} ${CONFIG_DIR} ${LOG_DIR}
   sleep 3
   echo "#######################################"
   echo "## ${PRODUCT} sytemd setup complete! ##"
