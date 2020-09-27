@@ -2,7 +2,7 @@
 #
 # Display --help [Command options]
 if [ $1 = "--help" ]; then
-     echo "USAGE: #linux_consul_systemd.sh <product[vault | consul | nomad]> <os [linux | darwin]>"
+     echo "USAGE: #linux_consul_build_run_config.sh <product[vault | consul | nomad]> <os [linux | darwin]>"
      exit
 fi
 
