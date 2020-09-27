@@ -114,6 +114,8 @@ consul)
   # Config Consul
   # Download Consul config script
   #curl $PRODUCT_URL > /tmp/${BACKEND_STORAGE}.zip
+  sudo chmod a+x /tmp/hashi_config.sh
+  /tmp/linux_consul_build_run_config.sh ${PRODUCT} ${OS}
   ;;
   
 nomad)
