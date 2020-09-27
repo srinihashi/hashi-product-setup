@@ -1,4 +1,11 @@
 #!/bin/bash
+#
+# Display --help [Command options]
+if [ $1 = "--help" ]; then
+     echo "USAGE: #linux_consul_systemd.sh <product[vault | consul | nomad]> <os [linux | darwin]>"
+     exit
+fi
+
 PRODUCT=$1
 OS=$2
 SCRIPT="${OS}_${PRODUCT}_config.sh"
