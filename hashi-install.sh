@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Display --help [Command options]
+# Display --help [Command options] Test
 if [ $1 = "--help" ]; then
      echo "USAGE: #hashi-install.sh <pkg [oss | ent | ent.hsm]> <product[vault | consul | nomad]> <version> <backend_storage [consul | raft]"
      exit
